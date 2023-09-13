@@ -17,7 +17,7 @@ router.post('/login', async (req:any, res:any) => {
                 {userId: findUser.id, username},
                 process.env.TOKEN_KEY,
                 {
-                    expiresIn:"5m"
+                    expiresIn:"1h"
                 }
             )
             res.cookie("userId", findUser.id)
