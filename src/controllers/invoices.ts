@@ -1,10 +1,30 @@
 
 const router = require('express').Router();
+const jwt = require('jsonwebtoken');
 const Inovices = require('../models/invoices');
+const Categories = require('../models/categories');
 
 router.post('/invoice', async (req:any, res:any) => {
     try{
-        const addInovices = await Inovices.create(req.body);
+        const {type, price, cateName} = req.body;
+        const token = req.cookies['auth-token'];
+        const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+        const findCate = await Categories.findOne({name: cateName});
+        let mapData = {
+            type: type,
+            price: price,
+            user_id: decoded.userId,
+            store_id: decoded.storeId,
+            cate_id: '',
+        }
+        
+        if(findCate){
+            mapData.cate_id = findCate._id;
+        }else{
+            const addCate = await Categories.create({name: cateName, description: "", image: "", index: 0});
+            mapData.cate_id = addCate._id;
+        }
+        const addInovices = await Inovices.create(mapData);
         res.status(200).json(addInovices);
     }catch (err: any){
         res.status(500).json(err.message);
