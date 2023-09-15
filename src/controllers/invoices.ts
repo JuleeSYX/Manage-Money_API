@@ -33,18 +33,17 @@ router.post('/invoice', async (req:any, res:any) => {
 
 router.get('/invoice', async (req:any, res:any) => {
     try{
-
-        const getInovices = await Inovices.aggregate([
+        const {kw, count, skip} = req.query;
+        let pipeline:any = [
+            // { $match: { price: Number(kw) } },
             { $lookup:{
                 from:"categories",
                 localField: "cate_id",
                 foreignField:"_id",
                 as:"category",
-                pipeline:[{
-                    $project:{
-                        name:1, description: 1, image: 1
-                    }
-                }]
+                pipeline:[
+                    { $project:{name:1, description: 1, image: 1}},
+                ]
             }},
             { $lookup:{
                 from:"stores",
@@ -71,11 +70,20 @@ router.get('/invoice', async (req:any, res:any) => {
             { $project:{
                 type: 1,
                 price: 1,
+                createdAt: 1,
                 category:{ $arrayElemAt: [ "$category", 0 ] },
                 store:{ $arrayElemAt: [ "$store", 0 ] },
                 user:{ $arrayElemAt: [ "$user", 0 ] }
-            }}
-        ])
+            }},
+            { $sort: { _id : -1 } },
+        ];
+        if(Number(skip) > 0){
+            pipeline.push({ $skip: Number(skip)})
+        }
+        if(Number(count) > 0){
+            pipeline.push({ $limit : Number(count)})
+        }
+        const getInovices = await Inovices.aggregate(pipeline);
         res.status(200).json(getInovices);
     }catch (err: any){
         res.status(500).json(err.message);
