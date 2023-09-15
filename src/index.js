@@ -30,8 +30,8 @@ app.use(compression());
 app.use(cookieParser());
 app.use(express.json());
 
-const authMiddleware = (req:any, res:any, next:any) => {
-    passport.authenticate("jwt", { session: false }, (err:any, user:any, info:any) => {
+const authMiddleware = (req, res, next) => {
+    passport.authenticate("jwt", { session: false }, (err, user, info) => {
       if (err) {
         return next(err);
       }
@@ -45,7 +45,7 @@ const authMiddleware = (req:any, res:any, next:any) => {
       next();
     })(req, res, next);
 };
-app.get('/', (req: any, res: any) => {
+app.get('/', (req, res) => {
     res.status(200).json("Welcome to my World");
 });
 app.use('/api', authMiddleware, api);
@@ -61,7 +61,7 @@ mongoose.connect(MONGO_URL).then(() => {
         console.log(`Server is runing on port: ${port}`);
     });
 }).catch((err) => console.log(err));
-mongoose.connection.on('error', (error: Error) => console.log(error));
+mongoose.connection.on('error', (error) => console.log(error));
 
 app.use(errorHandler);
 app.use(notFound);
