@@ -5,15 +5,15 @@ import compression from 'compression';
 import cors from 'cors';
 import http from 'http';
 import mongoose from 'mongoose';
-const errorHandler = require('./src/middleware/error-handler');
-const notFound = require('./src/middleware/not-found');
-const api = require('./src/controllers/index');
-const srartApi = require('./src/controllers/login');
+const errorHandler = require('./middleware/error-handler');
+const notFound = require('./middleware/not-found');
+const api = require('./controllers/index');
+const srartApi = require('./controllers/login');
 const passport = require('passport');
 const app = express();
 const port = process.env.APP_PORT || 8080;
 require("dotenv").config();
-require("./src/auth/passport");
+require("./auth/passport");
 
 app.use(
     cors({
