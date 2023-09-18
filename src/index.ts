@@ -19,7 +19,7 @@ app.use(
     cors({
     //   allowHeaders: '*',
     //   allowMethods: '*',
-      origin: 'http://localhost:8100',
+      origin: '*',
       credentials: true,
     })
   );
