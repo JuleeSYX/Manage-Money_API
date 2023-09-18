@@ -6,8 +6,8 @@ const Categories = require('../models/categories');
 
 router.post('/invoice', async (req:any, res:any) => {
     try{
-        const {type, price, cateName} = req.body;
-        const token = req.cookies['auth-token'];
+        const {type, price, cateName, token} = req.body;
+        // const token = req.cookies['auth-token'];
         const decoded = jwt.verify(token, process.env.TOKEN_KEY);
         const findCate = await Categories.findOne({name: cateName});
         let mapData = {
