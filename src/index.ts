@@ -17,10 +17,10 @@ require("./auth/passport");
 
 app.use(
     cors({
-    //   allowHeaders: '*',
-    //   allowMethods: '*',
-      origin: '*',
-      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      origin: 'https://localhost', // set the allowed origin
+      credentials: true
     })
   );
 
