@@ -90,6 +90,77 @@ router.get('/invoice', async (req:any, res:any) => {
     }
 })
 
+router.get('/invoice-today', async (req:any, res:any) => {
+    try{
+        const {kw, count, skip} = req.query;
+        let startDate = new Date();
+        let endDate = new Date();
+        startDate.setHours(7); // set the hours to 12
+        startDate.setMinutes(0); // set the minutes to 30
+        startDate.setSeconds(1); // set the seconds to 0
+      
+        endDate.setHours(30); // set the hours to 12
+        endDate.setMinutes(59); // set the minutes to 30
+        endDate.setSeconds(59); // set the seconds to 0
+        let pipeline:any = [
+            // { $match: { price: Number(kw) } },
+            { 
+                $match:{createdAt: { $gte: startDate, $lte: endDate}}
+            },
+            { $lookup:{
+                from:"categories",
+                localField: "cate_id",
+                foreignField:"_id",
+                as:"category",
+                pipeline:[
+                    { $project:{name:1, description: 1, image: 1}},
+                ]
+            }},
+            { $lookup:{
+                from:"stores",
+                localField: "store_id",
+                foreignField:"_id",
+                as:"store",
+                pipeline:[{
+                    $project:{
+                        name:1, 
+                    }
+                }]
+            }},
+            { $lookup:{
+                from:"users",
+                localField: "user_id",
+                foreignField:"_id",
+                as:"user",
+                pipeline:[{
+                    $project:{
+                        fullname:1, 
+                    }
+                }]
+            }},
+            { $project:{
+                type: 1,
+                price: 1,
+                createdAt: 1,
+                category:{ $arrayElemAt: [ "$category", 0 ] },
+                store:{ $arrayElemAt: [ "$store", 0 ] },
+                user:{ $arrayElemAt: [ "$user", 0 ] }
+            }},
+            { $sort: { _id : -1 } },
+        ];
+        if(Number(skip) > 0){
+            pipeline.push({ $skip: Number(skip)})
+        }
+        if(Number(count) > 0){
+            pipeline.push({ $limit : Number(count)})
+        }
+        const getInovices = await Inovices.aggregate(pipeline);
+        res.status(200).json(getInovices);
+    }catch (err: any){
+        res.status(500).json(err.message);
+    }
+})
+
 router.put('/invoice', async (req:any, res:any) => {
     try{
         const id = req.query.id;    
