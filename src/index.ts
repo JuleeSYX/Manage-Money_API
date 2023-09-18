@@ -19,7 +19,7 @@ app.use(
     cors({
       methods: ['GET', 'POST', 'PUT', 'DELETE'],
       allowedHeaders: ['Content-Type', 'Authorization'],
-      origin: 'https://localhost', // set the allowed origin
+      origin: ['https://localhost', 'http://localhost:8100/'], // set the allowed origin
       credentials: true
     })
   );

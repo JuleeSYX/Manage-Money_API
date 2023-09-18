@@ -15,14 +15,14 @@ router.post('/login', async (req:any, res:any) => {
             const token = await jwt.sign(
                 {userId: findUser.id, username, storeId: findUser.store_id},
                 process.env.TOKEN_KEY,
-                {
-                    expiresIn:"1h"
-                }
+                // {
+                //     expiresIn:"1h"
+                // }
             )
-            res.cookie("userId", findUser.id)
-            res.cookie("auth-token", token);
+            // res.cookie("userId", findUser.id)
+            // res.cookie("auth-token", token);
             
-            return res.status(200).json("Login successfully.");
+            return res.status(200).json(token);
         }
         res.status(400).send("The username or password is incorrect.");
     }catch (err:any){
