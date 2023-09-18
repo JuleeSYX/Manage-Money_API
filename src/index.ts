@@ -48,7 +48,8 @@ const authMiddleware = (req:any, res:any, next:any) => {
 app.get('/', (req:any, res:any) => {
     res.status(200).json("Welcome to my World");
 });
-app.use('/api', authMiddleware, api);
+// app.use('/api', authMiddleware, api);
+app.use('/api', api);
 app.use('/api-login', srartApi);
 
 const server = http.createServer(app);
