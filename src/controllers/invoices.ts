@@ -93,19 +93,17 @@ router.get('/invoice', async (req:any, res:any) => {
 router.get('/invoice-today', async (req:any, res:any) => {
     try{
         const {kw, count, skip} = req.query;
-        let startDate = new Date();
-        let endDate = new Date();
-        startDate.setHours(7); // set the hours to 12
-        startDate.setMinutes(0); // set the minutes to 30
-        startDate.setSeconds(1); // set the seconds to 0
-      
-        endDate.setHours(30); // set the hours to 12
-        endDate.setMinutes(59); // set the minutes to 30
-        endDate.setSeconds(59); // set the seconds to 0
+        
+        const today = new Date();
+        today.setHours(7, 0, 0, 0);
+        const tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1);
+        tomorrow.setHours(7, 0, 0, 0);
+       
         let pipeline:any = [
             // { $match: { price: Number(kw) } },
             { 
-                $match:{createdAt: { $gte: startDate, $lte: endDate}}
+                $match:{createdAt: { $gt: today, $lt: tomorrow}}
             },
             { $lookup:{
                 from:"categories",
