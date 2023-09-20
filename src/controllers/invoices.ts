@@ -99,11 +99,11 @@ router.get('/invoice-today', async (req:any, res:any) => {
         const tomorrow = new Date();
         tomorrow.setDate(today.getDate() + 1);
         tomorrow.setHours(0, 0, 0, 0);
-        const map = {
-            to: today,
-            end:tomorrow
-        }
-        return res.status(200).json(map);
+        // const map = {
+        //     to: today,
+        //     end:tomorrow
+        // }
+        // return res.status(200).json(map);
         let pipeline:any = [
             // { $match: { price: Number(kw) } },
             { 
