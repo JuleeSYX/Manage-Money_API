@@ -95,10 +95,10 @@ router.get('/invoice-today', async (req:any, res:any) => {
         const {kw, count, skip} = req.query;
         
         const today = new Date();
-        today.setHours(7, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
         const tomorrow = new Date();
         tomorrow.setDate(today.getDate() + 1);
-        tomorrow.setHours(7, 0, 0, 0);
+        tomorrow.setHours(0, 0, 0, 0);
         const map = {
             to: today,
             end:tomorrow
