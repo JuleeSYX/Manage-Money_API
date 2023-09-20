@@ -37,8 +37,8 @@ const authMiddleware = (req:any, res:any, next:any) => {
       }
       if (!user) {
         // Clear the cookie if the user is unauthorized
-        res.clearCookie("auth-token");
-        res.clearCookie("userId");
+        // res.clearCookie("auth-token");
+        // res.clearCookie("userId");
         return res.status(401).json({ message: "Unauthorized" });
       }
       req.user = user;
