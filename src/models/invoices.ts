@@ -9,10 +9,21 @@ const invoiceSchema = new mongoose.Schema(
         price:{
             type: Number
         },
+        status:{
+            type: Number
+        },
+        remark:{
+            type: String
+        },
         cate_id:{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Categories',
             required: [true, 'Please Select a Category']
+        },
+        cancelBy:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Users',
+            required: false,
         },
         user_id:{
             type: mongoose.Schema.Types.ObjectId,

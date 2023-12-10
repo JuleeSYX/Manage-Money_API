@@ -13,6 +13,7 @@ router.post('/invoice', async (req:any, res:any) => {
         let mapData = {
             type: type,
             price: price,
+            status: 1,
             user_id: decoded.userId,
             store_id: decoded.storeId,
             cate_id: '',
@@ -33,9 +34,9 @@ router.post('/invoice', async (req:any, res:any) => {
 
 router.get('/invoice', async (req:any, res:any) => {
     try{
-        const {kw, count, skip} = req.query;
+        const {kw, start, end, count, skip} = req.query;
         let pipeline:any = [
-            // { $match: { price: Number(kw) } },
+            { $match:{createdAt: { $gt: new Date(start), $lt: new Date(end)}}},
             { $lookup:{
                 from:"categories",
                 localField: "cate_id",
@@ -70,6 +71,7 @@ router.get('/invoice', async (req:any, res:any) => {
             { $project:{
                 type: 1,
                 price: 1,
+                status: 1,
                 createdAt: 1,
                 category:{ $arrayElemAt: [ "$category", 0 ] },
                 store:{ $arrayElemAt: [ "$store", 0 ] },
@@ -99,11 +101,6 @@ router.get('/invoice-today', async (req:any, res:any) => {
         const tomorrow = new Date();
         tomorrow.setDate(today.getDate() + 1);
         tomorrow.setHours(0, 0, 0, 0);
-        // const map = {
-        //     to: today,
-        //     end:tomorrow
-        // }
-        // return res.status(200).json(map);
         let pipeline:any = [
             // { $match: { price: Number(kw) } },
             { 
@@ -144,6 +141,7 @@ router.get('/invoice-today', async (req:any, res:any) => {
                 type: 1,
                 price: 1,
                 createdAt: 1,
+                status: 1,
                 category:{ $arrayElemAt: [ "$category", 0 ] },
                 store:{ $arrayElemAt: [ "$store", 0 ] },
                 user:{ $arrayElemAt: [ "$user", 0 ] }
@@ -163,10 +161,11 @@ router.get('/invoice-today', async (req:any, res:any) => {
     }
 })
 
-router.put('/invoice', async (req:any, res:any) => {
+router.put('/cancel-inv', async (req:any, res:any) => {
     try{
-        const id = req.query.id;    
-        const findUpdate = await Inovices.findByIdAndUpdate(id, req.body);
+        const {id, remark, token} = req.body;
+        const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+        const findUpdate = await Inovices.findByIdAndUpdate(id, {status: 0, remark: remark, cancelBy: decoded.userId});
         if(!findUpdate){
             return res.status(404).json({message: 'Can not find any Inovices by id' + id})
         }
